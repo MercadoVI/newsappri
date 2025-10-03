@@ -4,7 +4,7 @@
   "slug": "ley-derecho-vivienda-incertidumbre",
   "source": "Realty Investor",
   "published_at": "2025-10-02T10:00:00+02:00",
-  "hero_image": "https://tu-cdn-o-repo/img/ley-vivienda.jpg",
+  "hero_image": "https://newsappri/news/2025-10-02/espana-reino-unido-emision-deuda-inmobiliaria.webp",
   "summary": "Dos años después de su aprobación, la Ley 12/2023 genera un mosaico regulatorio y fallos de inconstitucionalidad que frenan la inversión en vivienda.",
   "tags": ["ley","vivienda","regulación","inversión","mercado"]
 }
