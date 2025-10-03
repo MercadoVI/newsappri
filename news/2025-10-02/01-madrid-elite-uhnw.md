@@ -4,7 +4,7 @@
   "slug": "housers-valle-aran-ii",
   "source": "Realty Investor",
   "published_at": "2025-10-03T08:00:00+02:00",
-  "hero_image": "https://newsappri/news/2025-10-02/build-to-rent-espana.webp",
+  "hero_image": "https://raw.githubusercontent.com/MercadoVI/newsappri/main/news/2025-10-02/build-to-rent-espana.webp",
   "summary": "Housers financia 9 viviendas y 17 plazas en Les (Valle de Arán, Lérida) con un tramo de 325.000 € y garantía hipotecaria de primer rango.",
   "tags": ["crowdfunding","hipotecaria","inmobiliario","lerida"]
 }
