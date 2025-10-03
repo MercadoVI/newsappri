@@ -1,6 +1,6 @@
 <!--meta
 {
-  "title": "Madrid, capital global del real estate de lujo",
+  "title": "España, entre los líderes de la inversión inmobiliaria en Europa en 2025",
   "slug": "madrid-elite-uhnw",
   "source": "euronews",
   "published_at": "2025-10-02T08:15:00+02:00",
