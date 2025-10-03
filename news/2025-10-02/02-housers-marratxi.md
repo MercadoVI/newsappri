@@ -4,7 +4,7 @@
   "slug": "madrid-elite-uhnw",
   "source": "euronews",
   "published_at": "2025-10-02T08:15:00+02:00",
-  "hero_image": "https://tu-cdn-o-repo/img/madrid.jpg",
+  "hero_image": "https://newsappri/news/2025-10-02/acceso-vivienda-espana-encuesta-40db.webp",
   "summary": "Madrid lidera el Barnes City Index 2025 como destino preferido por UHNWIs.",
   "tags": ["mercado","lujo","europa"]
 }
