@@ -4,7 +4,7 @@
   "slug": "civislend-residencial-huerta-malaga",
   "source": "Civislend",
   "published_at": "2025-10-02T10:00:00+02:00",
-  "hero_image": "https://newsappri/news/2025-10-02/fondos-internacionales-intensifican-living.webp",
+  "hero_image": "https://raw.githubusercontent.com/MercadoVI/newsappri/main/news/2025-10-02/fondos-internacionales-intensifican-living.webp",
   "summary": "Civislend lanza un proyecto en Málaga: edificio plurifamiliar de 9 viviendas y 2 estudios con garantía hipotecaria y una rentabilidad total estimada del 21 %.",
   "tags": ["crowdlending","Málaga","residencial","Civislend","rentabilidad"]
 }
