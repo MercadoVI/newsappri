@@ -5,29 +5,48 @@
       const link = document.createElement("link");
       link.id = "ri-news-style";
       link.rel = "stylesheet";
-      link.href = "https://mercadovi.github.io/newsappri/embed-ri-news.css"; // <- ajusta si usas otro host/ruta
+      link.href = "https://mercadovi.github.io/newsappri/embed-ri-news.css";
       document.head.appendChild(link);
     }
   })();
 
-  // ===== Utilidad: esperar DOM =====
+  // ===== Localiza el <script> invocador de forma robusta =====
+  const scriptTag = (function(){
+    // 1) Mejor opción: mientras se ejecuta el script
+    if (document.currentScript) return document.currentScript;
+
+    // 2) Fallback: busca el último <script> cuyo src coincida con embed-ri-news.js
+    const scripts = document.querySelectorAll('script[src]');
+    for (let i = scripts.length - 1; i >= 0; i--) {
+      const s = scripts[i];
+      if (/embed-ri-news\.js(\?|#|$)/.test(s.src)) return s;
+    }
+
+    // 3) Ultimo recurso: el último <script> de la página
+    return scripts[scripts.length - 1] || null;
+  })();
+
+  if (!scriptTag) {
+    console.error("[RI-NEWS] No se pudo localizar el <script> invocador.");
+    return;
+  }
+
+  // ===== Utilidad: esperar DOM si hace falta =====
   function ready(fn){
     if(document.readyState !== "loading") fn();
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
+  // --- Mueve aquí la ejecución principal ---
   ready(function(){
-    // Script actual y parametros data-*
-    const scriptTag = document.currentScript;
-
     // ====== CONFIG por defecto (overridable con data-*) ======
     const GITHUB_USER   = scriptTag.getAttribute("data-github-user") || "MercadoVI";
     const REPO_NAME     = scriptTag.getAttribute("data-repo")        || "newsappri";
     const LOOKBACK_DAYS = Number(scriptTag.getAttribute("data-lookback") || 60);
     const PAGE_SIZE     = Number(scriptTag.getAttribute("data-page-size") || 5);
-    const CATEGORY      = (scriptTag.getAttribute("data-category") || "crowdfunding").toLowerCase().trim(); // "crowdfunding"|"institucional"
+    const CATEGORY      = (scriptTag.getAttribute("data-category") || "crowdfunding").toLowerCase().trim();
     const RI_BASE       = scriptTag.getAttribute("data-ri-base")    || "https://realtyinvestor.eu";
-    const TITLE_OVERRIDE= scriptTag.getAttribute("data-title") || ""; // Título opcional
+    const TITLE_OVERRIDE= scriptTag.getAttribute("data-title") || "";
 
     if(CATEGORY !== "crowdfunding" && CATEGORY !== "institucional"){
       console.warn("[RI-NEWS] data-category debe ser 'crowdfunding' o 'institucional'. Valor recibido:", CATEGORY);
