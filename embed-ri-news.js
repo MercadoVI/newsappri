@@ -32,6 +32,16 @@
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
+  // ===== Formatador de dates en espanyol =====
+function fmtES(iso){
+  if(!iso) return "";
+  try{
+    const d = new Date(new Date(iso).toLocaleString("en-US",{timeZone:"Europe/Madrid"}));
+    return d.toLocaleDateString("es-ES",{year:"numeric",month:"long",day:"2-digit"});
+  }catch{ return ""; }
+}
+
+
   // ===== Modal (contenido renderizado) =====
   function ensureModal(){
     if(document.getElementById("ri-modal")) return;
@@ -195,13 +205,7 @@
       const da = String(d.getDate()).padStart(2,"0");
       return `${y}-${m}-${da}`;
     }
-    function fmtES(iso){
-      if(!iso) return "";
-      try{
-        const d = new Date(new Date(iso).toLocaleString("en-US",{timeZone:"Europe/Madrid"}));
-        return d.toLocaleDateString("es-ES",{year:"numeric",month:"long",day:"2-digit"});
-      }catch{ return ""; }
-    }
+
 
     // Fetch helpers
     async function j(url){ const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }
