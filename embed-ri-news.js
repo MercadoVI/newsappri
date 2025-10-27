@@ -1,11 +1,5 @@
 (function(){
 
-  if (window.__RI_NEWS_EMBED_LOADED__) {
-  console.warn("[RI-NEWS] Script ya estaba cargado. Evito doble inicialización.");
-  return;
-}
-window.__RI_NEWS_EMBED_LOADED__ = true;
-
   // ===== Carga de CSS remoto (solo una vez) =====
   (function injectCSS(){
     if(!document.getElementById("ri-news-style")){
