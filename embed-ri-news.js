@@ -90,7 +90,7 @@
     title.textContent = entry.meta.title || "(Sin título)";
     meta.textContent = entry.meta.published_at ? fmtES(entry.meta.published_at) : "";
 
-    // Body: el .mb puede traer markdown → lo convertimos a HTML ligero
+    // Body Markdown → HTML
     body.innerHTML = mdToHtml(entry.body || "");
 
     if(openUrl){
@@ -113,46 +113,34 @@
   // ===== Markdown -> HTML (ligero) =====
   function mdToHtml(md){
     if(!md) return "";
-    // Escape básico para seguridad (permite luego inyectar etiquetas nuestras)
-    const esc = s => String(s)
-      .replace(/&/g,"&amp;")
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;");
-
-    // Conserva saltos y luego aplica reemplazos típicos
+    const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     let s = md.replace(/\r\n?/g, "\n");
 
     // Code blocks ``` ```
     s = s.replace(/```([\s\S]*?)```/g, (m,code)=> `<pre class="ri-code"><code>${esc(code)}</code></pre>`);
-
     // Inline code `code`
     s = s.replace(/`([^`]+)`/g, (m,code)=> `<code class="ri-inline-code">${esc(code)}</code>`);
-
-    // Headers ###, ##, #
-    s = s.replace(/^\s*######\s+(.+)$/gm, "<h6>$1</h6>");
-    s = s.replace(/^\s*#####\s+(.+)$/gm,  "<h5>$1</h5>");
-    s = s.replace(/^\s*####\s+(.+)$/gm,   "<h4>$1</h4>");
-    s = s.replace(/^\s*###\s+(.+)$/gm,    "<h3>$1</h3>");
-    s = s.replace(/^\s*##\s+(.+)$/gm,     "<h2>$1</h2>");
-    s = s.replace(/^\s*#\s+(.+)$/gm,      "<h1>$1</h1>");
-
+    // Headers
+    s = s.replace(/^\s*######\s+(.+)$/gm, "<h6>$1</h6>")
+         .replace(/^\s*#####\s+(.+)$/gm,  "<h5>$1</h5>")
+         .replace(/^\s*####\s+(.+)$/gm,   "<h4>$1</h4>")
+         .replace(/^\s*###\s+(.+)$/gm,    "<h3>$1</h3>")
+         .replace(/^\s*##\s+(.+)$/gm,     "<h2>$1</h2>")
+         .replace(/^\s*#\s+(.+)$/gm,      "<h1>$1</h1>");
     // Bold / Italic
-    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-    s = s.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-
-    // Links [text](url)
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+         .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+    // Links
     s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, `<a href="$2" target="_blank" rel="noopener">$1</a>`);
-
     // Lists (simple)
-    s = s.replace(/^(?:-|\*)\s+(.+)$/gm, "<li>$1</li>");
-    s = s.replace(/(<li>[\s\S]*?<\/li>)(?!\s*<\/ul>)/g, "<ul>$1</ul>");
+    s = s.replace(/^(?:-|\*)\s+(.+)$/gm, "<li>$1</li>")
+         .replace(/(<li>[\s\S]*?<\/li>)(?!\s*<\/ul>)/g, "<ul>$1</ul>");
 
-    // Paragraphs: dos saltos crean párrafo
+    // Paragraphs (bloques por doble salto)
     s = s.split(/\n{2,}/).map(block=>{
       if (/^\s*<h[1-6]|^\s*<ul|^\s*<pre|\s*<blockquote|\s*<p|\s*<table|\s*<img|\s*<figure/.test(block.trim())){
         return block;
       }
-      // Line breaks simples a <br>
       const withBr = block.replace(/\n/g, "<br>");
       return `<p>${withBr}</p>`;
     }).join("\n");
@@ -162,7 +150,7 @@
 
   // ====== Inicio cuando el DOM está listo ======
   ready(function(){
-    // CONFIG por defecto (overridable con data-*)
+    // CONFIG (overridable con data-*)
     const GITHUB_USER   = scriptTag.getAttribute("data-github-user") || "MercadoVI";
     const REPO_NAME     = scriptTag.getAttribute("data-repo")        || "newsappri";
     const LOOKBACK_DAYS = Number(scriptTag.getAttribute("data-lookback") || 60);
@@ -188,6 +176,9 @@
       </div>
     `;
     scriptTag.parentNode.insertBefore(container, scriptTag.nextSibling);
+
+    // Crea modal ya (evita carreras)
+    ensureModal();
 
     // ===== Fechas (Europe/Madrid) =====
     function dateInMadrid(d = new Date()){
@@ -230,17 +221,30 @@
       return { meta, body };
     }
 
-    // Tarjeta → importante: data-slug para localizar la entrada
+    // Slug fallback
+    function normalizeSlug(meta){
+      if (meta.slug && String(meta.slug).trim()) return meta.slug;
+      const base = (meta.title || "").toString().trim().toLowerCase();
+      if (!base) return "";
+      return base
+        .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // quita acentos
+        .replace(/[^a-z0-9\s-]/g,'')
+        .replace(/\s+/g,'-')
+        .replace(/-+/g,'-');
+    }
+
+    // Tarjeta
     function card(meta){
-      const openUrl = `${RI_BASE}/noticias.html#/noticia/${encodeURIComponent(meta.slug)}`;
+      const slug = normalizeSlug(meta);
+      const openUrl = `${RI_BASE}/noticias.html#/noticia/${encodeURIComponent(slug)}`;
       const img = meta.hero_image
         ? `<img class="ri-thumb" src="${meta.hero_image}" alt="">`
         : `<div class="ri-thumb" aria-hidden="true"></div>`;
       return `
-        <a class="ri-card" href="${openUrl}" data-slug="${meta.slug}">
+        <a class="ri-card" href="${openUrl}" data-slug="${slug}">
           ${img}
           <div class="ri-body">
-            <h3 class="ri-h3">${esc(meta.title)}</h3>
+            <h3 class="ri-h3">${esc(meta.title || "(Sin título)")}</h3>
             <div class="ri-meta">${fmtES(meta.published_at)}</div>
           </div>
         </a>`;
@@ -290,8 +294,14 @@
         : "Noticias de hoy: Sector institucional");
 
       const entries = await gatherEntriesByCategory(CATEGORY);
-      // Mapa slug → entry (para abrir modal con contenido)
-      const entryBySlug = new Map(entries.map(e=> [e.meta.slug, e]));
+
+      // Mapa slug → entry (usa slug normalizado)
+      const entryBySlug = new Map(
+        entries.map(e=>{
+          const slug = normalizeSlug(e.meta);
+          return [slug, e];
+        })
+      );
 
       let page = 0;
       let moreInline = null;
@@ -347,10 +357,18 @@
       track.addEventListener("scroll", syncNav);
       window.addEventListener("resize", syncNav);
 
-      // ===== Intercepta click en tarjeta → abrir modal con contenido =====
+      // ===== Intercepta click en tarjeta → abrir modal con contenido (robusto) =====
       track.addEventListener("click", (e)=>{
-        const a = e.target.closest("a.ri-card");
-        if(!a) return;
+        const path = (e.composedPath && e.composedPath()) || [];
+        let a = null;
+        for (const node of path) {
+          if (node && node.nodeType === 1 && node.matches && node.matches("a.ri-card")) {
+            a = node; break;
+          }
+        }
+        if (!a && e.target && e.target.closest) a = e.target.closest("a.ri-card");
+        if (!a) return;
+
         e.preventDefault();
         const slug = a.getAttribute("data-slug");
         const entry = entryBySlug.get(slug);
