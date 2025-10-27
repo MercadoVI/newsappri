@@ -81,7 +81,6 @@ function safeFmtES(iso){
           <div class="ri-article-body"></div>
 
           <footer class="ri-article-foot">
-            //<a class="ri-open-new" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a>
             <p>by Realty Investor</p>
           </footer>
         </article>
