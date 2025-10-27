@@ -255,6 +255,7 @@
     async function gatherEntriesByCategory(targetCategory){
       const results = [];
       let d = todayMadrid();
+      d.setDate(d.getDate() + 1);
       for(let i=0; i<=LOOKBACK_DAYS; i++){
         const day = yyyymmdd(d);
         const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
