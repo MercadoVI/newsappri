@@ -222,36 +222,41 @@
   }
 
   // ===== Recoge noticias por categoría (empieza desde mañana ES) =====
-  async function gatherEntriesByCategory(cfg){
-    const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME } = cfg;
-    const results = [];
-    let d = tomorrowMadrid(); // 👈 empieza por mañana
-    for(let i=0; i<=LOOKBACK_DAYS; i++){
-      const day = yyyymmdd(d);
-      const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
-      try{
-        const idx = await j(idxUrl);
-        if(Array.isArray(idx.items) && idx.items.length){
-          const mdEntries = await Promise.all(idx.items.map(async fname=>{
-            const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
-            try{
-              const md = await t(mdUrl);
-              const { meta, body } = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
-              return { meta, body };
-            }catch{ return null; }
-          }));
-          mdEntries.filter(Boolean).forEach(e=>{
-            if(e.meta.category === CATEGORY) results.push(e);
-          });
-        }
-      }catch{}
-      d.setDate(d.getDate()-1); // hacia atrás en el tiempo
-    }
-    // Más nuevas primero
-    results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
-    return results;
-  }
+async function gatherEntriesByCategory(cfg){
+  const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME } = cfg;
+  const results = [];
+  let d = tomorrowMadrid(); // comença per demà
 
+  for(let i=0; i<=LOOKBACK_DAYS; i++){
+    const day = yyyymmdd(d);
+    const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
+    try{
+      const idx = await j(idxUrl);
+      if(Array.isArray(idx.items) && idx.items.length){
+        const mdEntries = await Promise.all(idx.items.map(async fname=>{
+          const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
+          try{
+            const md = await t(mdUrl);
+            const parsed = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
+            // 🔧 Fallback de data: si no hi ha published_at, usa el DAY de la carpeta
+            if (!parsed.meta.published_at) {
+              // utilitza mitjanit UTC per mantenir l’ordre entre dies
+              parsed.meta.published_at = `${day}T00:00:00Z`;
+            }
+            return parsed;
+          }catch{ return null; }
+        }));
+        mdEntries.filter(Boolean).forEach(e=>{
+          if(e.meta.category === CATEGORY) results.push(e);
+        });
+      }
+    }catch{}
+    d.setDate(d.getDate()-1); // avui → ahir → abans d’ahir…
+  }
+  // Ordenar (amb el fallback, avui ja no “salta”)
+  results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
+  return results;
+}
   // ===== Inicializa un embed concreto =====
   async function initEmbed(root, cfg){
     const {
