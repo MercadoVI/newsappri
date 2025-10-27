@@ -164,7 +164,7 @@
 }
 
 .ri-article-hero-wrap{
-  width: 100%; aspect-ratio: 16/9; background:#f2f2f2; overflow: hidden;
+  width: 100%; aspect-ratio: 46/9; background:#f2f2f2; overflow: hidden;
 }
 .ri-article-hero{
   width: 100%; height: 100%; object-fit: cover; display: block;
