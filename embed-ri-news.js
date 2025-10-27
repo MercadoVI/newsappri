@@ -1,4 +1,11 @@
 (function(){
+
+  if (window.__RI_NEWS_EMBED_LOADED__) {
+  console.warn("[RI-NEWS] Script ya estaba cargado. Evito doble inicialización.");
+  return;
+}
+window.__RI_NEWS_EMBED_LOADED__ = true;
+
   // ===== Carga de CSS remoto (solo una vez) =====
   (function injectCSS(){
     if(!document.getElementById("ri-news-style")){
@@ -39,6 +46,15 @@ function fmtES(iso){
     const d = new Date(new Date(iso).toLocaleString("en-US",{timeZone:"Europe/Madrid"}));
     return d.toLocaleDateString("es-ES",{year:"numeric",month:"long",day:"2-digit"});
   }catch{ return ""; }
+}
+
+// Wrapper seguro por si alguna instancia antigua no ve fmtES
+function safeFmtES(iso){
+  try {
+    return fmtES ? fmtES(iso) : (iso || "");
+  } catch {
+    return iso || "";
+  }
 }
 
 
@@ -98,7 +114,7 @@ function fmtES(iso){
     }
 
     title.textContent = entry.meta.title || "(Sin título)";
-    meta.textContent = entry.meta.published_at ? fmtES(entry.meta.published_at) : "";
+meta.textContent = entry.meta.published_at ? safeFmtES(entry.meta.published_at) : "";
 
     // Body Markdown → HTML
     body.innerHTML = mdToHtml(entry.body || "");
@@ -249,7 +265,7 @@ function fmtES(iso){
           ${img}
           <div class="ri-body">
             <h3 class="ri-h3">${esc(meta.title || "(Sin título)")}</h3>
-            <div class="ri-meta">${fmtES(meta.published_at)}</div>
+            <div class="ri-meta">${safeFmtES(meta.published_at)}</div>
           </div>
         </a>`;
     }
