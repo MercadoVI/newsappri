@@ -5,24 +5,19 @@
       const link = document.createElement("link");
       link.id = "ri-news-style";
       link.rel = "stylesheet";
-      link.href = "https://mercadovi.github.io/newsappri/embed-ri-news.css";
+      link.href = "https://mercadovi.github.io/newsappri/embed-ri-news.css"; // ajusta si usas otra ruta
       document.head.appendChild(link);
     }
   })();
 
   // ===== Localiza el <script> invocador de forma robusta =====
   const scriptTag = (function(){
-    // 1) Mejor opción: mientras se ejecuta el script
     if (document.currentScript) return document.currentScript;
-
-    // 2) Fallback: busca el último <script> cuyo src coincida con embed-ri-news.js
     const scripts = document.querySelectorAll('script[src]');
     for (let i = scripts.length - 1; i >= 0; i--) {
       const s = scripts[i];
       if (/embed-ri-news\.js(\?|#|$)/.test(s.src)) return s;
     }
-
-    // 3) Ultimo recurso: el último <script> de la página
     return scripts[scripts.length - 1] || null;
   })();
 
@@ -31,15 +26,143 @@
     return;
   }
 
-  // ===== Utilidad: esperar DOM si hace falta =====
+  // ===== Utilidad: esperar DOM =====
   function ready(fn){
     if(document.readyState !== "loading") fn();
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
-  // --- Mueve aquí la ejecución principal ---
+  // ===== Modal (contenido renderizado) =====
+  function ensureModal(){
+    if(document.getElementById("ri-modal")) return;
+    const wrap = document.createElement("div");
+    wrap.id = "ri-modal";
+    wrap.className = "ri-modal";
+    wrap.hidden = true;
+    wrap.innerHTML = `
+      <div class="ri-modal-backdrop" data-ri-close></div>
+      <div class="ri-modal-dialog" role="dialog" aria-modal="true" aria-label="Noticia">
+        <button class="ri-modal-close" type="button" aria-label="Cerrar" data-ri-close>×</button>
+
+        <article class="ri-article">
+          <div class="ri-article-hero-wrap">
+            <img class="ri-article-hero" alt="" />
+          </div>
+          <header class="ri-article-head">
+            <h3 class="ri-article-title"></h3>
+            <div class="ri-article-meta"></div>
+          </header>
+          <div class="ri-article-body"></div>
+
+          <footer class="ri-article-foot">
+            <a class="ri-open-new" target="_blank" rel="noopener">Abrir en pestaña nueva ↗</a>
+          </footer>
+        </article>
+      </div>
+    `;
+    document.body.appendChild(wrap);
+
+    wrap.addEventListener("click", (e)=>{
+      if(e.target.matches("[data-ri-close]")) closeModal();
+    });
+    document.addEventListener("keydown",(e)=>{
+      if(e.key === "Escape" && !wrap.hidden) closeModal();
+    });
+  }
+  function openModalWithEntry(entry, openUrl){
+    ensureModal();
+    const el = document.getElementById("ri-modal");
+    const hero = el.querySelector(".ri-article-hero");
+    const title = el.querySelector(".ri-article-title");
+    const meta = el.querySelector(".ri-article-meta");
+    const body = el.querySelector(".ri-article-body");
+    const openNew = el.querySelector(".ri-open-new");
+
+    // Imagen
+    if(entry.meta.hero_image){
+      hero.src = entry.meta.hero_image;
+      hero.parentElement.style.display = "";
+    }else{
+      hero.removeAttribute("src");
+      hero.parentElement.style.display = "none";
+    }
+
+    title.textContent = entry.meta.title || "(Sin título)";
+    meta.textContent = entry.meta.published_at ? fmtES(entry.meta.published_at) : "";
+
+    // Body: el .mb puede traer markdown → lo convertimos a HTML ligero
+    body.innerHTML = mdToHtml(entry.body || "");
+
+    if(openUrl){
+      openNew.href = openUrl;
+      openNew.style.display = "";
+    }else{
+      openNew.style.display = "none";
+    }
+
+    el.hidden = false;
+    document.documentElement.classList.add("ri-modal-open");
+  }
+  function closeModal(){
+    const el = document.getElementById("ri-modal");
+    if(!el) return;
+    el.hidden = true;
+    document.documentElement.classList.remove("ri-modal-open");
+  }
+
+  // ===== Markdown -> HTML (ligero) =====
+  function mdToHtml(md){
+    if(!md) return "";
+    // Escape básico para seguridad (permite luego inyectar etiquetas nuestras)
+    const esc = s => String(s)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;");
+
+    // Conserva saltos y luego aplica reemplazos típicos
+    let s = md.replace(/\r\n?/g, "\n");
+
+    // Code blocks ``` ```
+    s = s.replace(/```([\s\S]*?)```/g, (m,code)=> `<pre class="ri-code"><code>${esc(code)}</code></pre>`);
+
+    // Inline code `code`
+    s = s.replace(/`([^`]+)`/g, (m,code)=> `<code class="ri-inline-code">${esc(code)}</code>`);
+
+    // Headers ###, ##, #
+    s = s.replace(/^\s*######\s+(.+)$/gm, "<h6>$1</h6>");
+    s = s.replace(/^\s*#####\s+(.+)$/gm,  "<h5>$1</h5>");
+    s = s.replace(/^\s*####\s+(.+)$/gm,   "<h4>$1</h4>");
+    s = s.replace(/^\s*###\s+(.+)$/gm,    "<h3>$1</h3>");
+    s = s.replace(/^\s*##\s+(.+)$/gm,     "<h2>$1</h2>");
+    s = s.replace(/^\s*#\s+(.+)$/gm,      "<h1>$1</h1>");
+
+    // Bold / Italic
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    s = s.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+
+    // Links [text](url)
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, `<a href="$2" target="_blank" rel="noopener">$1</a>`);
+
+    // Lists (simple)
+    s = s.replace(/^(?:-|\*)\s+(.+)$/gm, "<li>$1</li>");
+    s = s.replace(/(<li>[\s\S]*?<\/li>)(?!\s*<\/ul>)/g, "<ul>$1</ul>");
+
+    // Paragraphs: dos saltos crean párrafo
+    s = s.split(/\n{2,}/).map(block=>{
+      if (/^\s*<h[1-6]|^\s*<ul|^\s*<pre|\s*<blockquote|\s*<p|\s*<table|\s*<img|\s*<figure/.test(block.trim())){
+        return block;
+      }
+      // Line breaks simples a <br>
+      const withBr = block.replace(/\n/g, "<br>");
+      return `<p>${withBr}</p>`;
+    }).join("\n");
+
+    return s;
+  }
+
+  // ====== Inicio cuando el DOM está listo ======
   ready(function(){
-    // ====== CONFIG por defecto (overridable con data-*) ======
+    // CONFIG por defecto (overridable con data-*)
     const GITHUB_USER   = scriptTag.getAttribute("data-github-user") || "MercadoVI";
     const REPO_NAME     = scriptTag.getAttribute("data-repo")        || "newsappri";
     const LOOKBACK_DAYS = Number(scriptTag.getAttribute("data-lookback") || 60);
@@ -48,32 +171,25 @@
     const RI_BASE       = scriptTag.getAttribute("data-ri-base")    || "https://realtyinvestor.eu";
     const TITLE_OVERRIDE= scriptTag.getAttribute("data-title") || "";
 
-    if(CATEGORY !== "crowdfunding" && CATEGORY !== "institucional"){
-      console.warn("[RI-NEWS] data-category debe ser 'crowdfunding' o 'institucional'. Valor recibido:", CATEGORY);
-    }
-
-    // ====== Inserta el contenedor después del script si no existe uno explícito ======
+    // Inserta contenedor
     const container = document.createElement("div");
     container.className = "ri-news-embed";
     container.setAttribute("data-category", CATEGORY);
     container.innerHTML = `
       <h2 class="ri-title"></h2>
-
       <div class="ri-carousel">
         <button class="ri-nav ri-prev" aria-label="Anterior">‹</button>
         <div class="ri-track" role="region" aria-live="polite"></div>
         <button class="ri-nav ri-next" aria-label="Siguiente">›</button>
       </div>
-
       <div class="ri-actions">
         <button class="ri-loadmore" type="button" hidden>Cargar más</button>
         <div class="ri-fallback" hidden>No hay noticias por ahora.</div>
       </div>
     `;
-    // Inserta inmediatamente tras el <script>
     scriptTag.parentNode.insertBefore(container, scriptTag.nextSibling);
 
-    // ====== Funciones de fecha (Europe/Madrid) ======
+    // ===== Fechas (Europe/Madrid) =====
     function dateInMadrid(d = new Date()){
       const str = d.toLocaleString("en-US", { timeZone: "Europe/Madrid" });
       return new Date(str);
@@ -96,11 +212,11 @@
       }catch{ return ""; }
     }
 
-    // ====== Fetch helpers ======
+    // Fetch helpers
     async function j(url){ const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }
     async function t(url){ const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); }
 
-    // ====== Parse meta desde <!--meta{...}--> ======
+    // Parse meta
     function extractMeta(md, fallbackSlug){
       const m = md.match(/<!--\s*meta\s*({[\s\S]*?})\s*-->/i);
       let meta = {};
@@ -114,14 +230,14 @@
       return { meta, body };
     }
 
-    function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
-
+    // Tarjeta → importante: data-slug para localizar la entrada
     function card(meta){
+      const openUrl = `${RI_BASE}/noticias.html#/noticia/${encodeURIComponent(meta.slug)}`;
       const img = meta.hero_image
         ? `<img class="ri-thumb" src="${meta.hero_image}" alt="">`
         : `<div class="ri-thumb" aria-hidden="true"></div>`;
       return `
-        <a class="ri-card" href="${RI_BASE}/noticias.html#/noticia/${encodeURIComponent(meta.slug)}" target="_blank" rel="noopener">
+        <a class="ri-card" href="${openUrl}" data-slug="${meta.slug}">
           ${img}
           <div class="ri-body">
             <h3 class="ri-h3">${esc(meta.title)}</h3>
@@ -129,12 +245,12 @@
           </div>
         </a>`;
     }
+    function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
 
-    // ====== Recolecta noticias empezando por HOY (ES) ======
+    // Recoge noticias empezando por HOY (ES)
     async function gatherEntriesByCategory(targetCategory){
       const results = [];
-      let d = todayMadrid(); // HOY exactamente en hora de España
-
+      let d = todayMadrid();
       for(let i=0; i<=LOOKBACK_DAYS; i++){
         const day = yyyymmdd(d);
         const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
@@ -149,70 +265,24 @@
                 return { meta, body };
               }catch{ return null; }
             }));
-
             mdEntries.filter(Boolean).forEach(e=>{
               if(e.meta.category === targetCategory) results.push(e);
             });
           }
         }catch{}
-        d.setDate(d.getDate()-1); // día anterior
+        d.setDate(d.getDate()-1);
       }
-
-      // Más recientes primero
       results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
       return results;
     }
 
-    // ===== Modal (popup) accesible con iframe =====
-function createModal(){
-  if(document.getElementById("ri-modal")) return;
-  const wrap = document.createElement("div");
-  wrap.id = "ri-modal";
-  wrap.className = "ri-modal";
-  wrap.innerHTML = `
-    <div class="ri-modal-backdrop" data-ri-close></div>
-    <div class="ri-modal-dialog" role="dialog" aria-modal="true" aria-label="Noticia">
-      <button class="ri-modal-close" type="button" aria-label="Cerrar" data-ri-close>×</button>
-      <iframe class="ri-modal-iframe" title="Noticia" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
-    </div>
-  `;
-  document.body.appendChild(wrap);
-
-  // Cerrar por click en backdrop o botón
-  wrap.addEventListener("click", (e)=>{
-    if(e.target.matches("[data-ri-close]")) closeModal();
-  });
-
-  // Cerrar con ESC
-  document.addEventListener("keydown", (e)=>{
-    if(e.key === "Escape" && !wrap.hidden) closeModal();
-  });
-}
-function openModal(url){
-  createModal();
-  const el = document.getElementById("ri-modal");
-  const frame = el.querySelector(".ri-modal-iframe");
-  frame.src = url;
-  el.hidden = false;
-  document.documentElement.classList.add("ri-modal-open");
-}
-function closeModal(){
-  const el = document.getElementById("ri-modal");
-  if(!el) return;
-  const frame = el.querySelector(".ri-modal-iframe");
-  frame.src = "about:blank";
-  el.hidden = true;
-  document.documentElement.classList.remove("ri-modal-open");
-}
-
-
-    // ====== Monta el carrusel en este contenedor ======
+    // Monta carrusel
     (async function initEmbed(root){
       const title = root.querySelector(".ri-title");
       const track = root.querySelector(".ri-track");
       const prev  = root.querySelector(".ri-prev");
       const next  = root.querySelector(".ri-next");
-      const more  = root.querySelector(".ri-loadmore"); // base (usamos hidden y clon inline)
+      const more  = root.querySelector(".ri-loadmore");
       const fallback = root.querySelector(".ri-fallback");
 
       title.textContent = TITLE_OVERRIDE || (CATEGORY === "crowdfunding"
@@ -220,6 +290,9 @@ function closeModal(){
         : "Noticias de hoy: Sector institucional");
 
       const entries = await gatherEntriesByCategory(CATEGORY);
+      // Mapa slug → entry (para abrir modal con contenido)
+      const entryBySlug = new Map(entries.map(e=> [e.meta.slug, e]));
+
       let page = 0;
       let moreInline = null;
 
@@ -236,15 +309,13 @@ function closeModal(){
         btn.addEventListener("click", onLoadMore);
         return btn;
       }
-
       function mountMore(){
         if(moreInline) moreInline.remove();
         if(!more.hidden){
           moreInline = createInlineMore();
-          track.appendChild(moreInline); // siempre al final del carrusel
+          track.appendChild(moreInline);
         }
       }
-
       function renderPage(){
         const end = Math.min((page+1)*PAGE_SIZE, entries.length);
         track.innerHTML = entries.slice(0, end).map(e=>card(e.meta)).join("");
@@ -252,7 +323,6 @@ function closeModal(){
         mountMore();
         requestAnimationFrame(syncNav);
       }
-
       function onLoadMore(){
         page++;
         const end = Math.min((page+1)*PAGE_SIZE, entries.length);
@@ -266,30 +336,34 @@ function closeModal(){
         mountMore();
         syncNav();
       }
-
       function syncNav(){
         prev.disabled = track.scrollLeft <= 5;
         next.disabled = (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 5);
       }
 
+      // Navegación carrusel
       prev.addEventListener("click", ()=> track.scrollBy({left: -track.clientWidth * 0.9, behavior:"smooth"}));
       next.addEventListener("click", ()=> track.scrollBy({left:  track.clientWidth * 0.9, behavior:"smooth"}));
       track.addEventListener("scroll", syncNav);
       window.addEventListener("resize", syncNav);
 
-      // ===== Intercepta clicks en tarjetas para abrir popup =====
-track.addEventListener("click", (e)=>{
-  const a = e.target.closest("a.ri-card");
-  if(!a) return;
-  e.preventDefault();
-  openModal(a.href); // 👈 abre popup con la noticia
-});
-
+      // ===== Intercepta click en tarjeta → abrir modal con contenido =====
+      track.addEventListener("click", (e)=>{
+        const a = e.target.closest("a.ri-card");
+        if(!a) return;
+        e.preventDefault();
+        const slug = a.getAttribute("data-slug");
+        const entry = entryBySlug.get(slug);
+        const linkUrl = a.getAttribute("href"); // para botón "Abrir en pestaña nueva"
+        if(entry){
+          openModalWithEntry(entry, linkUrl);
+        }
+      });
 
       if(entries.length){
         renderPage();
         fallback.hidden = true;
-      } else {
+      }else{
         track.innerHTML = "";
         more.hidden = true;
         fallback.hidden = false;
