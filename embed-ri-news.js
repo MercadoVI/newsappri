@@ -163,6 +163,49 @@
       return results;
     }
 
+    // ===== Modal (popup) accesible con iframe =====
+function createModal(){
+  if(document.getElementById("ri-modal")) return;
+  const wrap = document.createElement("div");
+  wrap.id = "ri-modal";
+  wrap.className = "ri-modal";
+  wrap.innerHTML = `
+    <div class="ri-modal-backdrop" data-ri-close></div>
+    <div class="ri-modal-dialog" role="dialog" aria-modal="true" aria-label="Noticia">
+      <button class="ri-modal-close" type="button" aria-label="Cerrar" data-ri-close>×</button>
+      <iframe class="ri-modal-iframe" title="Noticia" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+    </div>
+  `;
+  document.body.appendChild(wrap);
+
+  // Cerrar por click en backdrop o botón
+  wrap.addEventListener("click", (e)=>{
+    if(e.target.matches("[data-ri-close]")) closeModal();
+  });
+
+  // Cerrar con ESC
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape" && !wrap.hidden) closeModal();
+  });
+}
+function openModal(url){
+  createModal();
+  const el = document.getElementById("ri-modal");
+  const frame = el.querySelector(".ri-modal-iframe");
+  frame.src = url;
+  el.hidden = false;
+  document.documentElement.classList.add("ri-modal-open");
+}
+function closeModal(){
+  const el = document.getElementById("ri-modal");
+  if(!el) return;
+  const frame = el.querySelector(".ri-modal-iframe");
+  frame.src = "about:blank";
+  el.hidden = true;
+  document.documentElement.classList.remove("ri-modal-open");
+}
+
+
     // ====== Monta el carrusel en este contenedor ======
     (async function initEmbed(root){
       const title = root.querySelector(".ri-title");
@@ -233,6 +276,15 @@
       next.addEventListener("click", ()=> track.scrollBy({left:  track.clientWidth * 0.9, behavior:"smooth"}));
       track.addEventListener("scroll", syncNav);
       window.addEventListener("resize", syncNav);
+
+      // ===== Intercepta clicks en tarjetas para abrir popup =====
+track.addEventListener("click", (e)=>{
+  const a = e.target.closest("a.ri-card");
+  if(!a) return;
+  e.preventDefault();
+  openModal(a.href); // 👈 abre popup con la noticia
+});
+
 
       if(entries.length){
         renderPage();
