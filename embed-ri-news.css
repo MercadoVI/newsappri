@@ -1,0 +1,67 @@
+  /* ====== TOKENS ====== */
+  .ri-news-embed{
+    --ri-fg:#111; --ri-muted:#666; --ri-bg:#fff; --ri-gap:14px; --ri-radius:14px;
+    --ri-shadow:0 8px 24px rgba(0,0,0,.12);
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif; color:var(--ri-fg);
+    width:100%; max-width:1600px; margin-inline:auto;
+  }
+  .ri-title{
+    font-family:"Playfair Display",serif; font-weight:800; text-align:center;
+    margin:1.5rem auto 1rem; letter-spacing:.02em; color:#111;
+    font-size: clamp(1.2rem, 1.2rem + 1.5vw, 2.2rem);
+  }
+
+  /* ====== CAROUSEL ====== */
+  .ri-carousel{ position:relative; display:flex; align-items:center; gap:8px; }
+  .ri-track{
+    overflow:auto hidden; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+    display:flex; gap:var(--ri-gap); padding:6px; width:100%;
+  }
+  .ri-card{
+    scroll-snap-align:start; flex:0 0 auto; width: min(90vw, 320px);
+    display:flex; flex-direction:column; background:var(--ri-bg); border-radius:var(--ri-radius);
+    overflow:hidden; box-shadow:var(--ri-shadow); text-decoration:none; color:inherit;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .ri-card:hover{ transform: translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.14); }
+  .ri-thumb{ aspect-ratio:16/9; width:100%; object-fit:cover; background:#f2f2f2; display:block; }
+  .ri-body{ padding:12px 14px; display:grid; gap:8px; }
+  .ri-h3{ margin:0; font-weight:800; line-height:1.25; font-size: clamp(.95rem, .9rem + .4vw, 1.15rem); }
+  .ri-meta{ font-size:.85em; color:var(--ri-muted); }
+
+  .ri-nav{
+    flex:0 0 auto; width:36px; height:36px; border-radius:50%; border:1px solid #ddd;
+    background:#fff; cursor:pointer; display:grid; place-items:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+  }
+  .ri-nav:disabled{ opacity:.35; cursor:not-allowed; }
+
+  .ri-actions{ display:flex; align-items:center; justify-content:center; gap:12px; margin-top:12px; }
+
+  /* ====== Load More DENTRO del carrusel ====== */
+  .ri-loadmore-inline{
+    flex:0 0 auto; width: min(90vw, 320px);
+    display:flex; align-items:center; justify-content:center;
+    border-radius:var(--ri-radius);
+    border:1px dashed #111; background:#fafafa; color:#111;
+    font-weight:800; text-decoration:none; cursor:pointer;
+    box-shadow:var(--ri-shadow);
+    padding:0; min-height: calc(320px * 9 / 16); /* altura aproximada como una tarjeta (ratio 16:9) */
+  }
+  .ri-loadmore-inline:focus{ outline:2px solid #111; outline-offset:2px; }
+  .ri-loadmore-inline:hover{ filter:brightness(1.02); transform: translateY(-2px); transition: transform .18s ease; }
+
+  .ri-loadmore-inline .ri-more-inner{
+    display:grid; place-items:center; gap:8px; padding:12px 14px; width:100%;
+  }
+  .ri-more-icon{ font-size:1.5rem; line-height:1; }
+
+  /* Botón “oculto” fuera del carrusel (queda para accesibilidad y fallback JS) */
+  .ri-loadmore{ display:none; }
+
+  /* Anchos mayores: más tarjetas visibles a la vez */
+  @media (min-width:900px){ .ri-card, .ri-loadmore-inline{ width:min(42vw, 360px);} }
+  @media (min-width:1280px){ .ri-card, .ri-loadmore-inline{ width:min(30vw, 360px);} }
+  @media (min-width:1600px){ .ri-card, .ri-loadmore-inline{ width:min(24vw, 360px);} }
+  @media (min-width:2200px){ .ri-card, .ri-loadmore-inline{ width:min(20vw, 380px);} }
+  @media (min-width:3000px){ .ri-card, .ri-loadmore-inline{ width:min(16vw, 420px);} }
