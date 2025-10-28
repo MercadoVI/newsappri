@@ -3,7 +3,7 @@
   "title": "España, entre los líderes de la inversión inmobiliaria en Europa en 2025",
   "slug": "espana-europa-lideres",
   "source": "euronews",
-  "published_at": "2025-10-02",
+  "published_at": "2025-10-02","category":"institucional", 
   "hero_image": "https://raw.githubusercontent.com/MercadoVI/newsappri/main/news/2025-10-02/espana-lider-inversion-europea-2025.webp",
   "summary": "España se ha consolidado en 2025 como uno de los destinos más atractivos para el capital inmobiliario en Europa.",
   "tags": ["espana","lujo","europa"]
