@@ -223,9 +223,7 @@ function dayShiftMadrid(offsetDays){
   }
 
   // ===== Recoge noticias por categoría (empieza desde mañana ES) =====
-// Recorre TODO el rango (0 → -LOOKBACK_DAYS), junta todas las noticias de la categoría,
-// ordena por fecha desc y devuelve el array completo. El paginado lo hace el front.
-async function gatherEntriesByCategory(cfg){
+async function gatherEntriesByCategoryStream(cfg, onBatch){
   const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME } = cfg;
   const results = [];
 
@@ -245,19 +243,25 @@ async function gatherEntriesByCategory(cfg){
             return parsed;
           } catch { return null; }
         }));
-        mdEntries.filter(Boolean).forEach(e=>{
-          if (e.meta.category === CATEGORY) results.push(e);
-        });
+
+        const newItems = mdEntries.filter(Boolean).filter(e=>e.meta.category===CATEGORY);
+        if (newItems.length){
+          results.push(...newItems);
+          // 🔥 Llama a callback parcial con los resultados ordenados actuales
+          results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
+          onBatch([...results]);
+        }
       }
     } catch {
-      // 404 del día → seguimos; no cortamos para no perder días anteriores
+      // 404 ignorado
     }
   }
 
-  // Orden global por fecha (más recientes primero)
+  // Devuelve el total acumulado (por si se necesita después)
   results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
   return results;
 }
+
   // ===== Inicializa un embed concreto =====
   async function initEmbed(root, cfg){
     const {
@@ -276,8 +280,29 @@ async function gatherEntriesByCategory(cfg){
       ? "Noticias de hoy: Crowdfunding inmobiliario"
       : "Noticias de hoy: Sector institucional");
 
-const entries = await gatherEntriesByCategory({
-  LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME, PAGE_SIZE
+let entries = [];
+const entryBySlug = new Map();
+
+function renderPartial(batch){
+  entries = batch;
+  // reconstruye mapa slug → entry
+  entryBySlug.clear();
+  for(const e of entries) entryBySlug.set(normalizeSlug(e.meta), e);
+  // pinta primeras PAGE_SIZE
+  const end = Math.min((page+1)*PAGE_SIZE, entries.length);
+  track.innerHTML = entries.slice(0, end).map(e=>makeCard(e.meta, RI_BASE)).join("");
+  more.hidden = end >= entries.length;
+  mountMore();
+  requestAnimationFrame(syncNav);
+  fallback.hidden = entries.length > 0;
+}
+
+// 🔥 Empieza la búsqueda, renderiza conforme llegan batches
+gatherEntriesByCategoryStream(
+  { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME },
+  renderPartial
+).then(all => {
+  entries = all; // final
 });
 
     // slug → entry
