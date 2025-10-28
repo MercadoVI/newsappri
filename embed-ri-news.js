@@ -32,14 +32,20 @@
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
-  // ===== Fecha → “27 de octubre de 2025” (zona Europe/Madrid) =====
-  function fmtES(iso){
-    if(!iso) return "";
-    try{
-      const d = new Date(new Date(iso).toLocaleString("en-US",{timeZone:"Europe/Madrid"}));
-      return d.toLocaleDateString("es-ES",{year:"numeric",month:"long",day:"2-digit"});
-    }catch{ return ""; }
+// ===== Fecha → “28/10/2025” (zona Europe/Madrid) =====
+function fmtES(iso){
+  if(!iso) return "";
+  try {
+    const d = new Date(new Date(iso).toLocaleString("en-US",{timeZone:"Europe/Madrid"}));
+    const day = String(d.getDate()).padStart(2,"0");
+    const month = String(d.getMonth() + 1).padStart(2,"0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  } catch {
+    return "";
   }
+}
+
   function safeFmtES(iso){
     try { return fmtES ? fmtES(iso) : (iso||""); } catch { return iso||""; }
   }
