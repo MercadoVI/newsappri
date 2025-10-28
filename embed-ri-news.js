@@ -32,19 +32,33 @@
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
-// ===== Fecha → “28/10/2025” (zona Europe/Madrid) =====
+// ===== Fecha estable → "28/10/2025" en Europe/Madrid (sin reparsear strings) =====
+const DF_MAD_SHORT = new Intl.DateTimeFormat("es-ES", {
+  timeZone: "Europe/Madrid",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric"
+});
+
 function fmtES(iso){
-  if(!iso) return "";
-  try {
-    const d = new Date(new Date(iso).toLocaleString("en-US",{timeZone:"Europe/Madrid"}));
-    const day = String(d.getDate()).padStart(2,"0");
-    const month = String(d.getMonth() + 1).padStart(2,"0");
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  } catch {
-    return "";
+  if (!iso) return "";
+  // Intento 1: ISO completo tipo "2025-10-28T00:00:00Z" o similar
+  let d = new Date(iso);
+  if (!isNaN(d)) return DF_MAD_SHORT.format(d);
+
+  // Intento 2: fecha tipo "YYYY-MM-DD" (sin hora)
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso).trim());
+  if (m) {
+    const [, y, mo, da] = m;
+    // Construimos en UTC para evitar desfases, el formateo aplica la zona de Madrid
+    d = new Date(Date.UTC(+y, +mo - 1, +da));
+    if (!isNaN(d)) return DF_MAD_SHORT.format(d);
   }
+
+  // Si no se pudo parsear, devolvemos vacío en lugar de NaN
+  return "";
 }
+
 
   function safeFmtES(iso){
     try { return fmtES ? fmtES(iso) : (iso||""); } catch { return iso||""; }
