@@ -158,12 +158,13 @@
     return new Date(str);
   }
   // 👇 Empieza a contar a partir de mañana (hora de España)
-  function tomorrowMadrid(){
-    const now = dateInMadrid();
-    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    d.setDate(d.getDate() + 1);
-    return d;
-  }
+// Antes: tomorrowMadrid()
+// Ahora: hoy en zona Europe/Madrid, truncado a medianoche
+function todayMadrid(){
+  const now = dateInMadrid();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
   function yyyymmdd(d){
     const y = d.getFullYear();
     const m = String(d.getMonth()+1).padStart(2,"0");
@@ -220,41 +221,51 @@
   }
 
   // ===== Recoge noticias por categoría (empieza desde mañana ES) =====
-  async function gatherEntriesByCategory(cfg){
-    const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME } = cfg;
-    const results = [];
-    let d = tomorrowMadrid(); // comença per demà
+async function gatherEntriesByCategory(cfg){
+  const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME, PAGE_SIZE = 5 } = cfg;
+  const results = [];
+  let d = todayMadrid();                 // ← empieza por HOY
+  let consecutiveMisses = 0;
+  const MISS_LIMIT = 2;                  // corta si ya tienes resultados y fallas 2 días seguidos
 
-    for(let i=0; i<=LOOKBACK_DAYS; i++){
-      const day = yyyymmdd(d);
-      const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
-      try{
-        const idx = await j(idxUrl);
-        if(Array.isArray(idx.items) && idx.items.length){
-          const mdEntries = await Promise.all(idx.items.map(async fname=>{
-            const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
-            try{
-              const md = await t(mdUrl);
-              const parsed = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
-              // 🔧 Fallback de data: si no hi ha published_at, usa el DAY de la carpeta
-              if (!parsed.meta.published_at) {
-                // utilitza mitjanit UTC per mantenir l’ordre entre dies
-                parsed.meta.published_at = `${day}T00:00:00Z`;
-              }
-              return parsed;
-            }catch{ return null; }
-          }));
-          mdEntries.filter(Boolean).forEach(e=>{
-            if(e.meta.category === CATEGORY) results.push(e);
-          });
-        }
-      }catch{}
-      d.setDate(d.getDate()-1); // avui → ahir → abans d’ahir…
+  for (let i = 0; i <= LOOKBACK_DAYS; i++){
+    const day = yyyymmdd(d);
+    const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
+
+    try{
+      const idx = await j(idxUrl);
+      consecutiveMisses = 0;             // hubo índice: resetea fallos
+
+      if (Array.isArray(idx.items) && idx.items.length){
+        const mdEntries = await Promise.all(idx.items.map(async fname=>{
+          const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
+          try{
+            const md = await t(mdUrl);
+            const parsed = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
+            if (!parsed.meta.published_at) parsed.meta.published_at = `${day}T00:00:00Z`;
+            return parsed;
+          }catch{ return null; }
+        }));
+
+        mdEntries.filter(Boolean).forEach(e=>{
+          if (e.meta.category === CATEGORY) results.push(e);
+        });
+
+        // Si ya tenemos suficiente para la primera pinta, corta para no esperar más
+        if (results.length >= PAGE_SIZE) break;
+      }
+    }catch{
+      // 404 u otro error en index.json
+      consecutiveMisses++;
+      if (results.length > 0 && consecutiveMisses >= MISS_LIMIT) break;
     }
-    // Ordenar (amb el fallback, avui ja no “salta”)
-    results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
-    return results;
+
+    d.setDate(d.getDate() - 1);          // hoy → ayer → antes de ayer…
   }
+
+  results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
+  return results;
+}
 
   // ===== Inicializa un embed concreto =====
   async function initEmbed(root, cfg){
@@ -274,7 +285,9 @@
       ? "Noticias de hoy: Crowdfunding inmobiliario"
       : "Noticias de hoy: Sector institucional");
 
-    const entries = await gatherEntriesByCategory({ LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME });
+const entries = await gatherEntriesByCategory({
+  LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME, PAGE_SIZE
+});
 
     // slug → entry
     const entryBySlug = new Map(
