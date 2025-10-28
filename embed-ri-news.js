@@ -1,4 +1,3 @@
-<script>
 (function(){ 
   // ===== Inyecta CSS una sola vez =====
   (function injectCSS(){
@@ -450,4 +449,3 @@
     });
   });
 })();
-</script>
