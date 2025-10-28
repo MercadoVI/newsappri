@@ -1,4 +1,5 @@
-(function(){
+<script>
+(function(){ 
   // ===== Inyecta CSS una sola vez =====
   (function injectCSS(){
     if(!document.getElementById("ri-news-style")){
@@ -257,7 +258,7 @@
   // ===== Inicializa un embed concreto =====
   async function initEmbed(root, cfg){
     const {
-      CATEGORY, PAGE_SIZE, LOOKBACK_DAYS, RI_BASE, TITLE_OVERRIDE,
+      CATEGORY, PAGE_SIZE, LOOKBACK_DAYS, RI_BASE,
       GITHUB_USER, REPO_NAME
     } = cfg;
 
@@ -268,9 +269,8 @@
     const more  = root.querySelector(".ri-loadmore");
     const fallback = root.querySelector(".ri-fallback");
 
-    title.textContent = TITLE_OVERRIDE || (CATEGORY === "crowdfunding"
-      ? "Noticias de hoy: Crowdfunding inmobiliario"
-      : "Noticias de hoy: Sector institucional");
+    // Elimina cualquier título existente (para asegurar que no se muestre)
+    if (title) title.remove();
 
     // STREAMING
     let entries = [];
@@ -384,7 +384,7 @@
     const DEF_PAGE_SIZE     = Number(scriptTag.getAttribute("data-page-size") || 5);
     const DEF_CATEGORY      = (scriptTag.getAttribute("data-category") || "crowdfunding").toLowerCase().trim();
     const DEF_RI_BASE       = scriptTag.getAttribute("data-ri-base")    || "https://realtyinvestor.eu";
-    const DEF_TITLE         = scriptTag.getAttribute("data-title") || "";
+    // const DEF_TITLE      = scriptTag.getAttribute("data-title") || ""; // (ya no se usa)
 
     // Si ya hay contenedores en el HTML, inicialízalos todos.
     // Si no hay, crea UNO tomando los data-* del script.
@@ -397,7 +397,6 @@
       container.setAttribute("data-lookback", String(DEF_LOOKBACK_DAYS));
       container.setAttribute("data-ri-base", DEF_RI_BASE);
       container.innerHTML = `
-        <h2 class="ri-title"></h2>
         <div class="ri-carousel">
           <button class="ri-nav ri-prev" aria-label="Anterior">‹</button>
           <div class="ri-track" role="region" aria-live="polite"></div>
@@ -423,7 +422,6 @@
         PAGE_SIZE:     Number(root.getAttribute("data-page-size") || DEF_PAGE_SIZE),
         LOOKBACK_DAYS: Number(root.getAttribute("data-lookback")  || DEF_LOOKBACK_DAYS),
         RI_BASE:       root.getAttribute("data-ri-base") || DEF_RI_BASE,
-        TITLE_OVERRIDE:root.getAttribute("data-title")    || DEF_TITLE,
         GITHUB_USER:   DEF_GITHUB_USER,
         REPO_NAME:     DEF_REPO_NAME
       };
@@ -431,7 +429,6 @@
       // Si el root aún no tiene estructura interna, se la inyectamos
       if (!root.querySelector(".ri-track")) {
         root.innerHTML = `
-          <h2 class="ri-title"></h2>
           <div class="ri-carousel">
             <button class="ri-nav ri-prev" aria-label="Anterior">‹</button>
             <div class="ri-track" role="region" aria-live="polite"></div>
@@ -444,8 +441,13 @@
         `;
       }
 
+      // Elimina cualquier h2 residual si existiera en este root
+      const strayTitle = root.querySelector(".ri-title");
+      if (strayTitle) strayTitle.remove();
+
       // Lanza el embed
       initEmbed(root, cfg);
     });
   });
 })();
+</script>
