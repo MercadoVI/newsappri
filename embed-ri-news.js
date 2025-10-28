@@ -68,7 +68,7 @@
           <div class="ri-article-body"></div>
 
           <footer class="ri-article-foot">
-          <p>by Realty Investor</p>
+            <a class="ri-brand-link" href="https://realtyinvestor.eu/" target="_blank" rel="noopener">by Realty Investor</a>
           </footer>
         </article>
       </div>
@@ -82,14 +82,14 @@
       if(e.key === "Escape" && !wrap.hidden) closeModal();
     });
   }
-  function openModalWithEntry(entry, openUrl){
+
+  function openModalWithEntry(entry){
     ensureModal();
     const el = document.getElementById("ri-modal");
     const hero = el.querySelector(".ri-article-hero");
     const title = el.querySelector(".ri-article-title");
     const meta = el.querySelector(".ri-article-meta");
     const body = el.querySelector(".ri-article-body");
-    const openNew = el.querySelector(".ri-open-new");
 
     if(entry.meta.hero_image){
       hero.src = entry.meta.hero_image;
@@ -103,12 +103,10 @@
     meta.textContent = entry.meta.published_at ? safeFmtES(entry.meta.published_at) : "";
     body.innerHTML = mdToHtml(entry.body || "");
 
-    if(openUrl){ openNew.href = openUrl; openNew.style.display = ""; }
-    else { openNew.style.display = "none"; }
-
     el.hidden = false;
     document.documentElement.classList.add("ri-modal-open");
   }
+
   function closeModal(){
     const el = document.getElementById("ri-modal");
     if(!el) return;
@@ -222,41 +220,42 @@
   }
 
   // ===== Recoge noticias por categoría (empieza desde mañana ES) =====
-async function gatherEntriesByCategory(cfg){
-  const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME } = cfg;
-  const results = [];
-  let d = tomorrowMadrid(); // comença per demà
+  async function gatherEntriesByCategory(cfg){
+    const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME } = cfg;
+    const results = [];
+    let d = tomorrowMadrid(); // comença per demà
 
-  for(let i=0; i<=LOOKBACK_DAYS; i++){
-    const day = yyyymmdd(d);
-    const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
-    try{
-      const idx = await j(idxUrl);
-      if(Array.isArray(idx.items) && idx.items.length){
-        const mdEntries = await Promise.all(idx.items.map(async fname=>{
-          const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
-          try{
-            const md = await t(mdUrl);
-            const parsed = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
-            // 🔧 Fallback de data: si no hi ha published_at, usa el DAY de la carpeta
-            if (!parsed.meta.published_at) {
-              // utilitza mitjanit UTC per mantenir l’ordre entre dies
-              parsed.meta.published_at = `${day}T00:00:00Z`;
-            }
-            return parsed;
-          }catch{ return null; }
-        }));
-        mdEntries.filter(Boolean).forEach(e=>{
-          if(e.meta.category === CATEGORY) results.push(e);
-        });
-      }
-    }catch{}
-    d.setDate(d.getDate()-1); // avui → ahir → abans d’ahir…
+    for(let i=0; i<=LOOKBACK_DAYS; i++){
+      const day = yyyymmdd(d);
+      const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
+      try{
+        const idx = await j(idxUrl);
+        if(Array.isArray(idx.items) && idx.items.length){
+          const mdEntries = await Promise.all(idx.items.map(async fname=>{
+            const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
+            try{
+              const md = await t(mdUrl);
+              const parsed = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
+              // 🔧 Fallback de data: si no hi ha published_at, usa el DAY de la carpeta
+              if (!parsed.meta.published_at) {
+                // utilitza mitjanit UTC per mantenir l’ordre entre dies
+                parsed.meta.published_at = `${day}T00:00:00Z`;
+              }
+              return parsed;
+            }catch{ return null; }
+          }));
+          mdEntries.filter(Boolean).forEach(e=>{
+            if(e.meta.category === CATEGORY) results.push(e);
+          });
+        }
+      }catch{}
+      d.setDate(d.getDate()-1); // avui → ahir → abans d’ahir…
+    }
+    // Ordenar (amb el fallback, avui ja no “salta”)
+    results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
+    return results;
   }
-  // Ordenar (amb el fallback, avui ja no “salta”)
-  results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
-  return results;
-}
+
   // ===== Inicializa un embed concreto =====
   async function initEmbed(root, cfg){
     const {
@@ -351,8 +350,7 @@ async function gatherEntriesByCategory(cfg){
       e.preventDefault();
       const slug = a.getAttribute("data-slug");
       const entry = entryBySlug.get(slug);
-      const linkUrl = a.getAttribute("href");
-      if(entry) openModalWithEntry(entry, linkUrl);
+      if(entry) openModalWithEntry(entry);
     });
 
     if(entries.length){
