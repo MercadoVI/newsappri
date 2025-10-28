@@ -3,7 +3,7 @@
   "title": "El negocio de la intermediación inmobiliaria en Europa crecerá un 6% anual hasta 2030",
   "slug": "negocio-intermediacion-2030",
   "source": "euronews",
-  "published_at": "2025-10-02",
+  "published_at": "2025-10-02","category":"institucional", 
   "hero_image": "https://raw.githubusercontent.com/MercadoVI/newsappri/main/news/2025-10-02/intermediacion-inmobiliaria-europa-2030.webp",
   "summary": "El mercado de agencias e intermediación inmobiliaria en Europa encara un ciclo de crecimiento sostenido.",
   "tags": ["mercado","lujo","europa"]
