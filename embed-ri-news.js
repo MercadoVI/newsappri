@@ -157,20 +157,22 @@
     const str = d.toLocaleString("en-US", { timeZone: "Europe/Madrid" });
     return new Date(str);
   }
-  // 👇 Empieza a contar a partir de mañana (hora de España)
-// Antes: tomorrowMadrid()
-// Ahora: hoy en zona Europe/Madrid, truncado a medianoche
-function todayMadrid(){
-  const now = dateInMadrid();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  // ===== Fechas SIEMPRE en Europe/Madrid (sin reconstruir Date local) =====
+const FMT_YMD_MAD = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Madrid',
+  year: 'numeric', month: '2-digit', day: '2-digit'
+}); // -> "YYYY-MM-DD"
+
+function yyyymmddMadrid(date){
+  return FMT_YMD_MAD.format(date);
 }
 
-  function yyyymmdd(d){
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const da = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${da}`;
-  }
+// offset 0 = hoy (Madrid), -1 = ayer, -2 = anteayer...
+function dayShiftMadrid(offsetDays){
+  return yyyymmddMadrid(new Date(Date.now() + offsetDays * 86400000));
+}
+
   function escHtml(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
 
   // ===== Fetch helpers =====
@@ -224,49 +226,43 @@ function todayMadrid(){
 async function gatherEntriesByCategory(cfg){
   const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME, PAGE_SIZE = 5 } = cfg;
   const results = [];
-  let d = todayMadrid();                 // ← empieza por HOY
   let consecutiveMisses = 0;
-  const MISS_LIMIT = 2;                  // corta si ya tienes resultados y fallas 2 días seguidos
+  const MISS_LIMIT = 2; // si ya hay resultados y fallan 2 días seguidos, paramos
 
-  for (let i = 0; i <= LOOKBACK_DAYS; i++){
-    const day = yyyymmdd(d);
+  for (let offset = 0; offset >= -LOOKBACK_DAYS; offset--) {
+    const day = dayShiftMadrid(offset);
     const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
 
-    try{
+    try {
       const idx = await j(idxUrl);
-      consecutiveMisses = 0;             // hubo índice: resetea fallos
+      consecutiveMisses = 0;
 
-      if (Array.isArray(idx.items) && idx.items.length){
-        const mdEntries = await Promise.all(idx.items.map(async fname=>{
+      if (Array.isArray(idx.items) && idx.items.length) {
+        const mdEntries = await Promise.all(idx.items.map(async fname => {
           const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
-          try{
+          try {
             const md = await t(mdUrl);
             const parsed = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
             if (!parsed.meta.published_at) parsed.meta.published_at = `${day}T00:00:00Z`;
             return parsed;
-          }catch{ return null; }
+          } catch { return null; }
         }));
 
         mdEntries.filter(Boolean).forEach(e=>{
           if (e.meta.category === CATEGORY) results.push(e);
         });
 
-        // Si ya tenemos suficiente para la primera pinta, corta para no esperar más
         if (results.length >= PAGE_SIZE) break;
       }
-    }catch{
-      // 404 u otro error en index.json
+    } catch {
       consecutiveMisses++;
       if (results.length > 0 && consecutiveMisses >= MISS_LIMIT) break;
     }
-
-    d.setDate(d.getDate() - 1);          // hoy → ayer → antes de ayer…
   }
 
   results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
   return results;
 }
-
   // ===== Inicializa un embed concreto =====
   async function initEmbed(root, cfg){
     const {
