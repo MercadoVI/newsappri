@@ -305,7 +305,7 @@ function fmtES(iso){
       btn.innerHTML = `
         <div class="ri-more-inner">
           <div class="ri-more-icon">＋</div>
-          <div> Cargar más </div>
+          <div> Load more </div>
         </div>`;
       btn.addEventListener("click", onLoadMore);
       return btn;
