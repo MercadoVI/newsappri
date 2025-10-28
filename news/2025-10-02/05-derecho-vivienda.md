@@ -3,7 +3,7 @@
   "title": "La Ley por el Derecho a la Vivienda y la incertidumbre regulatoria que enfría la inversión inmobiliaria en España",
   "slug": "ley-derecho-vivienda-incertidumbre",
   "source": "Realty Investor",
-  "published_at": "2025-10-02",
+  "published_at": "2025-10-02","category":"institucional", 
   "hero_image": "https://raw.githubusercontent.com/MercadoVI/newsappri/main/news/2025-10-02/ley-derecho-vivienda-incertidumbre-inversion.webp",
   "summary": "Dos años después de su aprobación, la Ley 12/2023 genera un mosaico regulatorio y fallos de inconstitucionalidad que frenan la inversión en vivienda.",
   "tags": ["ley","vivienda","regulación","inversión","mercado"]
