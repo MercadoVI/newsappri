@@ -1,6 +1,6 @@
 <!--meta
 {
-  "title": "España, entre los líderes de la inversión inmobiliaria en Europa en 2025",
+  "title": "Spain, among the leaders of real estate investment in Europe in 2025",
   "slug": "espana-europa-lideres",
   "source": "euronews",
   "published_at": "2025-10-02","category":"institucional", 
@@ -8,37 +8,34 @@
   "summary": "España se ha consolidado en 2025 como uno de los destinos más atractivos para el capital inmobiliario en Europa.",
   "tags": ["espana","lujo","europa"]
 }
--->
-España se ha consolidado en 2025 como uno de los destinos más atractivos para el capital inmobiliario en Europa. Aunque no encabeza el ranking por volumen absoluto —Reino Unido y Alemania mantienen un tamaño superior—, el dinamismo del mercado español y su notable crecimiento relativo sitúan al país como referencia entre inversores institucionales y fondos internacionales.
+-->In 2025, Spain has consolidated itself as one of the most attractive destinations for real estate capital in Europe. Although it does not lead the ranking in absolute volume —with the United Kingdom and Germany remaining larger markets—, the dynamism of the Spanish market and its notable relative growth position the country as a reference point for institutional investors and international funds.
 
-Los datos del primer semestre son ilustrativos. Según CBRE, en el primer trimestre de 2025 la inversión inmobiliaria alcanzó 3.300 millones de euros, lo que supone un 39% más interanual, frente al crecimiento medio europeo cercano al 6%. En el segundo trimestre, las cifras varían en función de la consultora: BNP Paribas Real Estate calcula 4.582 millones de euros, mientras Colliers sitúa el dato en 3.845 millones, con un acumulado de 8.263 millones en el primer semestre, un 44% más que en el mismo periodo del año anterior. Estas divergencias obedecen a criterios distintos de contabilización de operaciones, pero coinciden en señalar el vigor del mercado español.
+Data from the first half of the year are revealing. According to CBRE, in the first quarter of 2025, real estate investment reached €3.3 billion, a 39% year-on-year increase, compared with an average European growth of around 6%. In the second quarter, figures vary depending on the consulting firm: BNP Paribas Real Estate estimates €4.582 billion, while Colliers places it at €3.845 billion, for a total of €8.263 billion in the first half of the year — 44% higher than in the same period of the previous year. These discrepancies are due to different accounting criteria, but all agree on the strength of the Spanish market.
 
-Más allá de los volúmenes, el atractivo de España se refleja en las encuestas de intenciones de inversión. Según el sondeo anual de CBRE, España es el segundo país más atractivo para invertir en Europa en 2025, solo por detrás de Alemania. En el desglose urbano, Madrid ocupa el segundo puesto y Barcelona el cuarto, lo que consolida a ambas capitales como nodos internacionales del real estate europeo.
+Beyond volumes, Spain’s appeal is also reflected in investment intention surveys. According to CBRE’s annual survey, Spain ranks as the second most attractive country for investment in Europe in 2025, just behind Germany. On the urban level, Madrid ranks second and Barcelona fourth, consolidating both cities as international hubs for European real estate.
 
-### Un entorno macroeconómico favorable
+### A Favorable Macroeconomic Environment
 
-El impulso del mercado inmobiliario español se apoya en fundamentos macroeconómicos sólidos. La OCDE elevó en septiembre su previsión de crecimiento para España hasta el 2,6% en 2025, y Moody’s mejoró la calificación crediticia del país a A3, reforzando la percepción de estabilidad. Este entorno, junto a una gradual relajación de los tipos de interés en la eurozona, ha facilitado que los inversores vean en los activos reales españoles una cobertura atractiva frente a la volatilidad global.
+The strength of Spain’s real estate market is supported by solid macroeconomic fundamentals. In September, the OECD raised its growth forecast for Spain to 2.6% in 2025, and Moody’s upgraded the country’s credit rating to A3, reinforcing perceptions of stability. This environment, combined with a gradual easing of interest rates in the eurozone, has encouraged investors to view Spanish real assets as an attractive hedge against global volatility.
 
-### Diversificación de segmentos y resiliencia
+### Diversified Segments and Resilience
 
-La inversión no se limita al residencial tradicional. Los segmentos de vivienda en alquiler, residencias de estudiantes, senior living, logística y turismo hotelero han ganado un peso considerable en las carteras. El sector hospitality, en particular, se ha beneficiado de la fortaleza del turismo internacional y de la recuperación del consumo doméstico.
+Investment is not limited to traditional residential assets. Segments such as rental housing, student residences, senior living, logistics, and hospitality have gained significant weight in investment portfolios. The hospitality sector, in particular, has benefited from strong international tourism and the recovery of domestic consumption.
 
-En paralelo, los criterios ESG se han convertido en condición sine qua non. Fondos y aseguradoras priorizan activos con eficiencia energética y proyectos de rehabilitación verde, un factor que ha multiplicado la demanda de edificios sostenibles en mercados como Madrid, Málaga y Valencia.
+At the same time, ESG criteria have become a sine qua non condition. Funds and insurers now prioritize energy-efficient assets and green rehabilitation projects, a factor that has significantly boosted demand for sustainable buildings in markets such as Madrid, Málaga, and Valencia.
 
-### Escasez estructural de vivienda
+### Structural Housing Shortage
 
-La demanda en el segmento residencial sigue siendo uno de los motores del atractivo español. El país cuenta con un parque de vivienda social equivalente al 1,72% de los hogares, frente a una media europea cercana al 8%, según el Observatorio de Vivienda y Suelo. Esta brecha estructural garantiza un espacio de crecimiento para proyectos de alquiler asequible y colaboraciones público-privadas.
+Demand in the residential segment remains one of the key drivers of Spain’s appeal. The country’s social housing stock represents only 1.72% of households, compared with a European average of around 8%, according to the Observatorio de Vivienda y Suelo. This structural gap ensures room for growth in affordable rental projects and public-private partnerships.
 
-Ciudades emergentes como Valencia, Málaga o Bilbao, así como áreas metropolitanas de crecimiento rápido, se perfilan como nuevos focos de capital. Los precios de entrada más bajos respecto a Madrid y Barcelona, unidos a buenas perspectivas de revalorización, refuerzan el interés de fondos internacionales en diversificar geográficamente dentro de España.
+Emerging cities such as Valencia, Málaga, and Bilbao, along with fast-growing metropolitan areas, are emerging as new investment hotspots. Lower entry prices compared to Madrid and Barcelona, combined with strong appreciation prospects, reinforce international funds’ interest in diversifying geographically within Spain.
 
-### Riesgos a vigilar
+### Risks to Watch
 
-El liderazgo relativo de España no está exento de retos. La inseguridad jurídica vinculada a la Ley por el Derecho a la Vivienda, la presión regulatoria sobre el alquiler turístico y los costes crecientes de construcción pueden condicionar operaciones. A ello se suma el riesgo de que un repunte de los tipos de interés o tensiones geopolíticas limiten el apetito inversor.
+Spain’s relative leadership is not without challenges. Legal uncertainty associated with the Housing Rights Law, regulatory pressure on short-term rentals, and rising construction costs could affect transactions. Additionally, there is the risk that a resurgence in interest rates or geopolitical tensions could dampen investor appetite.
 
-Con todo, la posición española en 2025 es clara: en un entorno europeo de crecimiento moderado, España destaca por su fortaleza relativa, su atractivo urbano y la posibilidad de diversificación en activos y regiones.
+Even so, Spain’s position in 2025 is clear: in a European environment of moderate growth, the country stands out for its relative strength, urban appeal, and diversification potential across asset classes and regions.
 
----
+Join the Founders List and discover all the real estate investment opportunities available to retail investors. Subscribe to access exclusive analyses, deal alerts, and market perspectives.
 
-Únete a la lista de fundadores y descubre todas las oportunidades de inversión inmobiliaria para el inversor retail. Suscríbete y accede a análisis exclusivos, alertas de operaciones y perspectivas de mercado.
-
-Disclaimer: Este artículo tiene un carácter exclusivamente informativo y no debe interpretarse en ningún caso como recomendación o consejo de inversión.
+Disclaimer: This article is for informational purposes only and should not be interpreted as investment advice or recommendation.
