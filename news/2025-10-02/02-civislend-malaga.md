@@ -1,6 +1,6 @@
 <!--meta
 {
-  "title": "Civislend abre inversión en Residencial Huerta Málaga",
+  "title": "Civislend opens investment in Residencial Huerta Málaga",
   "slug": "civislend-residencial-huerta-malaga",
   "source": "Civislend",
   "published_at": "2025-10-02","category":"crowdfunding", 
@@ -8,40 +8,46 @@
   "summary": "Civislend lanza un proyecto en Málaga: edificio plurifamiliar de 9 viviendas y 2 estudios con garantía hipotecaria y una rentabilidad total estimada del 21 %.",
   "tags": ["crowdlending","Málaga","residencial","Civislend","rentabilidad"]
 }
--->
-La plataforma de financiación participativa Civislend anuncia la apertura del proyecto Residencial Huerta Málaga, una operación de préstamo con garantía hipotecaria de primer rango destinada a financiar parte de la compra del suelo y los costes de construcción de un edificio residencial en el distrito Centro de Málaga. La apertura está programada para el lunes 6 de octubre a las 12:00 horas.
+-->The crowdfunding platform Civislend has announced the opening of the Residencial Huerta Málaga project — a first-rank mortgage-backed loan operation aimed at financing part of the land purchase and construction costs of a residential building in Málaga’s Centro district. The opening is scheduled for Monday, October 6th at 12:00 PM.
 
-### Características del proyecto
+### Project Features
 
-El activo consiste en un edificio plurifamiliar de obra nueva con 9 viviendas, distribuidas en planta baja, primera y segunda, además de 2 estudios y trasteros. La azotea contará con una zona común con terraza y piscina. En total, se desarrollarán 630 m² de superficie construida sobre una parcela de 254 m², en el barrio de Olletas, próximo al estadio de La Rosaleda y al Cerro de San Cristóbal.
+The asset consists of a new-build multi-family building with 9 apartments, distributed across the ground floor, first, and second floors, as well as 2 studios and storage rooms. The rooftop will feature a communal area with a terrace and swimming pool. In total, the development comprises 630 m² of built area on a 254 m² plot, located in the Olletas neighborhood, near La Rosaleda Stadium and Cerro de San Cristóbal.
 
-### Condiciones financieras de la operación
+### Financial Conditions of the Operation
 
-- Importe total a financiar: 1.780.000 €
-- Rentabilidad total estimada: 21,00 %
-- Tipo de interés nominal (TIN): 10,50 %
-- Plazo: 24 meses, con posibilidad de amortización parcial o total a partir del mes 6 sin penalización
-- Pago de intereses: modalidad bullet
-- Ticket mínimo: 250 €
-- Ticket máximo por inversor: 3.000 € durante la primera hora de apertura
+Total amount to be financed: €1,780,000
 
-### Garantías del préstamo
-- Hipoteca de primer rango sobre:
-  · El activo principal en Málaga, con valor de tasación actual de 858.199 € y valor HET de 2.453.000 €.
-  · Un suelo urbano consolidado en Ronda (Málaga), con valor de tasación de 655.890 €.
-- El valor conjunto de las garantías asciende a 1.514.090 €, lo que implica un LTV del 51,5 % y un LTV HET del 57,3 %, según datos de Civislend.
-El promotor: Grupo Zamu
+Estimated total return: 21.00%
 
-El proyecto está impulsado por Grupo Zamu, promotora y constructora con más de 30 años de experiencia en el sector residencial en la Costa del Sol. Se trata del tercer proyecto financiado con Civislend tras “Kalma Málaga” y “La Dalia Marbella”, ambos con un avance positivo según los informes de la plataforma. El compromiso del promotor incluye una aportación de fondos propios de 656.751 €, equivalente al 45,7 % de la operación.
+Nominal annual interest rate (TIN): 10.50%
 
-### Contexto de mercado
+Term: 24 months, with the possibility of partial or full early repayment from month 6 onward without penalty
 
-El estudio de mercado elaborado para el proyecto destaca que las viviendas tipo piso de obra nueva en Málaga capital mantienen una fuerte demanda, especialmente en barrios residenciales próximos al centro. El informe recoge comparables de compraventa de vivienda nueva y reformada en la zona, concluyendo que los valores están alineados con el precio estimado para este desarrollo.
+Interest payment: bullet modality
 
-Málaga se ha consolidado en los últimos años como uno de los mercados más dinámicos del inmobiliario español, con un creciente interés por parte de compradores nacionales e internacionales. La ubicación del proyecto, en un área consolidada y bien conectada, refuerza el atractivo de esta inversión.
+Minimum investment: €250
 
----
+Maximum investment per investor: €3,000 during the first hour after opening
 
-Únete a la lista de fundadores y descubre todas las oportunidades de inversión inmobiliaria para el inversor retail. Suscríbete y accede a análisis exclusivos, alertas de operaciones y predicciones de mercado.
+### Loan Guarantees
 
-La información aquí contenida es de carácter periodístico y nunca puede interpretarse como recomendación ni consejo de inversión.
+First-rank mortgage on:
+· The main asset in Málaga, with a current appraisal value of €858,199 and an HET value of €2,453,000.
+· A consolidated urban plot in Ronda (Málaga), with an appraisal value of €655,890.
+
+The combined value of the guarantees amounts to €1,514,090, resulting in an LTV of 51.5% and an HET LTV of 57.3%, according to Civislend data.
+
+The developer: Grupo Zamu
+
+The project is promoted by Grupo Zamu, a developer and construction company with more than 30 years of experience in the residential sector on the Costa del Sol. This is the third project financed through Civislend, following “Kalma Málaga” and “La Dalia Marbella”, both showing positive progress according to the platform’s reports. The developer’s commitment includes an equity contribution of €656,751, equivalent to 45.7% of the operation.
+
+### Market Context
+
+The market study prepared for the project highlights that new-build apartments in Málaga city continue to show strong demand, particularly in residential neighborhoods close to the city center. The report includes comparable sales of new and refurbished properties in the area, concluding that the projected values are consistent with the estimated price for this development.
+
+In recent years, Málaga has established itself as one of the most dynamic real estate markets in Spain, attracting growing interest from both national and international buyers. The project’s location, in a well-established and well-connected area, further enhances the appeal of this investment.
+
+Join the Founders List and discover all real estate investment opportunities for retail investors. Subscribe to access exclusive analyses, operation alerts, and market forecasts.
+
+The information contained herein is for journalistic purposes only and should never be interpreted as investment advice or recommendation.
