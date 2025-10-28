@@ -40,12 +40,11 @@
       return d.toLocaleDateString("es-ES",{year:"numeric",month:"long",day:"2-digit"});
     }catch{ return ""; }
   }
-  // Wrapper por seguridad ante dobles cargas antiguas
   function safeFmtES(iso){
     try { return fmtES ? fmtES(iso) : (iso||""); } catch { return iso||""; }
   }
 
-  // ===== Modal (contenido renderizado) =====
+  // ===== Modal =====
   function ensureModal(){
     if(document.getElementById("ri-modal")) return;
     const wrap = document.createElement("div");
@@ -152,28 +151,23 @@
     return s;
   }
 
-  // ===== Fechas y utilidades (Europe/Madrid) =====
-  function dateInMadrid(d = new Date()){
-    const str = d.toLocaleString("en-US", { timeZone: "Europe/Madrid" });
-    return new Date(str);
+  // ===== Fechas SIEMPRE en Europe/Madrid =====
+  const FMT_YMD_MAD = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Madrid',
+    year: 'numeric', month: '2-digit', day: '2-digit'
+  }); // -> "YYYY-MM-DD"
+
+  function yyyymmddMadrid(date){ return FMT_YMD_MAD.format(date); }
+  // offset 0 = hoy (Madrid), -1 = ayer, -2 = anteayer...
+  function dayShiftMadrid(offsetDays){
+    return yyyymmddMadrid(new Date(Date.now() + offsetDays * 86400000));
   }
 
-  // ===== Fechas SIEMPRE en Europe/Madrid (sin reconstruir Date local) =====
-const FMT_YMD_MAD = new Intl.DateTimeFormat('en-CA', {
-  timeZone: 'Europe/Madrid',
-  year: 'numeric', month: '2-digit', day: '2-digit'
-}); // -> "YYYY-MM-DD"
-
-function yyyymmddMadrid(date){
-  return FMT_YMD_MAD.format(date);
-}
-
-// offset 0 = hoy (Madrid), -1 = ayer, -2 = anteayer...
-function dayShiftMadrid(offsetDays){
-  return yyyymmddMadrid(new Date(Date.now() + offsetDays * 86400000));
-}
-
-  function escHtml(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
+  function escHtml(s){
+    return String(s).replace(/[&<>"']/g, c => (
+      {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]
+    ));
+  }
 
   // ===== Fetch helpers =====
   async function j(url){ const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }
@@ -193,7 +187,7 @@ function dayShiftMadrid(offsetDays){
     return { meta, body };
   }
 
-  // ===== Normaliza slug si no viene en meta =====
+  // ===== Normaliza slug =====
   function normalizeSlug(meta){
     if (meta.slug && String(meta.slug).trim()) return meta.slug;
     const base = (meta.title || "").toString().trim().toLowerCase();
@@ -205,7 +199,7 @@ function dayShiftMadrid(offsetDays){
       .replace(/-+/g,'-');
   }
 
-  // ===== Genera card (usa safeFmtES) =====
+  // ===== Card =====
   function makeCard(meta, RI_BASE){
     const slug = normalizeSlug(meta);
     const openUrl = `${RI_BASE}/noticias.html#/noticia/${encodeURIComponent(slug)}`;
@@ -222,45 +216,43 @@ function dayShiftMadrid(offsetDays){
       </a>`;
   }
 
-  // ===== Recoge noticias por categoría (empieza desde mañana ES) =====
-async function gatherEntriesByCategoryStream(cfg, onBatch){
-  const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME } = cfg;
-  const results = [];
+  // ===== Stream: leer días y pintar por tandas =====
+  async function gatherEntriesByCategoryStream(cfg, onBatch){
+    const { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME } = cfg;
+    const results = [];
 
-  for (let offset = 0; offset >= -LOOKBACK_DAYS; offset--) {
-    const day = dayShiftMadrid(offset);
-    const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
+    for (let offset = 0; offset >= -LOOKBACK_DAYS; offset--) {
+      const day = dayShiftMadrid(offset);
+      const idxUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/index.json`;
 
-    try {
-      const idx = await j(idxUrl);
-      if (Array.isArray(idx.items) && idx.items.length) {
-        const mdEntries = await Promise.all(idx.items.map(async fname => {
-          const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
-          try {
-            const md = await t(mdUrl);
-            const parsed = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
-            if (!parsed.meta.published_at) parsed.meta.published_at = `${day}T00:00:00Z`;
-            return parsed;
-          } catch { return null; }
-        }));
+      try {
+        const idx = await j(idxUrl);
+        if (Array.isArray(idx.items) && idx.items.length) {
+          const mdEntries = await Promise.all(idx.items.map(async fname => {
+            const mdUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/news/${day}/${fname}`;
+            try {
+              const md = await t(mdUrl);
+              const parsed = extractMeta(md, fname.replace(/\.(mb|md|markdown)$/i,""));
+              if (!parsed.meta.published_at) parsed.meta.published_at = `${day}T00:00:00Z`;
+              return parsed;
+            } catch { return null; }
+          }));
 
-        const newItems = mdEntries.filter(Boolean).filter(e=>e.meta.category===CATEGORY);
-        if (newItems.length){
-          results.push(...newItems);
-          // 🔥 Llama a callback parcial con los resultados ordenados actuales
-          results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
-          onBatch([...results]);
+          const newItems = mdEntries.filter(Boolean).filter(e=>e.meta.category===CATEGORY);
+          if (newItems.length){
+            results.push(...newItems);
+            results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
+            onBatch([...results]); // pinta parcial
+          }
         }
+      } catch {
+        // 404: no hay carpeta ese día; continuar
       }
-    } catch {
-      // 404 ignorado
     }
-  }
 
-  // Devuelve el total acumulado (por si se necesita después)
-  results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
-  return results;
-}
+    results.sort((a,b)=> new Date(b.meta.published_at||0) - new Date(a.meta.published_at||0));
+    return results;
+  }
 
   // ===== Inicializa un embed concreto =====
   async function initEmbed(root, cfg){
@@ -280,38 +272,11 @@ async function gatherEntriesByCategoryStream(cfg, onBatch){
       ? "Noticias de hoy: Crowdfunding inmobiliario"
       : "Noticias de hoy: Sector institucional");
 
-let entries = [];
-const entryBySlug = new Map();
-
-function renderPartial(batch){
-  entries = batch;
-  // reconstruye mapa slug → entry
-  entryBySlug.clear();
-  for(const e of entries) entryBySlug.set(normalizeSlug(e.meta), e);
-  // pinta primeras PAGE_SIZE
-  const end = Math.min((page+1)*PAGE_SIZE, entries.length);
-  track.innerHTML = entries.slice(0, end).map(e=>makeCard(e.meta, RI_BASE)).join("");
-  more.hidden = end >= entries.length;
-  mountMore();
-  requestAnimationFrame(syncNav);
-  fallback.hidden = entries.length > 0;
-}
-
-// 🔥 Empieza la búsqueda, renderiza conforme llegan batches
-gatherEntriesByCategoryStream(
-  { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME },
-  renderPartial
-).then(all => {
-  entries = all; // final
-});
-
-    // slug → entry
-    const entryBySlug = new Map(
-      entries.map(e=> [ normalizeSlug(e.meta), e ])
-    );
-
+    // STREAMING
+    let entries = [];
     let page = 0;
     let moreInline = null;
+    const entryBySlug = new Map();
 
     function createInlineMore(){
       const btn = document.createElement("button");
@@ -326,6 +291,7 @@ gatherEntriesByCategoryStream(
       btn.addEventListener("click", onLoadMore);
       return btn;
     }
+
     function mountMore(){
       if(moreInline) moreInline.remove();
       if(!more.hidden){
@@ -333,6 +299,21 @@ gatherEntriesByCategoryStream(
         track.appendChild(moreInline);
       }
     }
+
+    function renderPartial(batch){
+      entries = batch;
+      // reconstruye mapa slug → entry
+      entryBySlug.clear();
+      for (const e of entries) entryBySlug.set(normalizeSlug(e.meta), e);
+
+      const end = Math.min((page+1)*PAGE_SIZE, entries.length);
+      track.innerHTML = entries.slice(0, end).map(e=>makeCard(e.meta, RI_BASE)).join("");
+      more.hidden = end >= entries.length;
+      mountMore();
+      requestAnimationFrame(syncNav);
+      fallback.hidden = entries.length > 0;
+    }
+
     function renderPage(){
       const end = Math.min((page+1)*PAGE_SIZE, entries.length);
       track.innerHTML = entries.slice(0, end).map(e=>makeCard(e.meta, RI_BASE)).join("");
@@ -340,6 +321,7 @@ gatherEntriesByCategoryStream(
       mountMore();
       requestAnimationFrame(syncNav);
     }
+
     function onLoadMore(){
       page++;
       const end = Math.min((page+1)*PAGE_SIZE, entries.length);
@@ -353,6 +335,7 @@ gatherEntriesByCategoryStream(
       mountMore();
       syncNav();
     }
+
     function syncNav(){
       prev.disabled = track.scrollLeft <= 5;
       next.disabled = (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 5);
@@ -364,7 +347,7 @@ gatherEntriesByCategoryStream(
     track.addEventListener("scroll", syncNav);
     window.addEventListener("resize", syncNav);
 
-    // Click robusto en tarjeta → abrir modal con contenido
+    // Click robusto en tarjeta → abrir modal
     track.addEventListener("click", (e)=>{
       const path = (e.composedPath && e.composedPath()) || [];
       let a = null;
@@ -382,19 +365,19 @@ gatherEntriesByCategoryStream(
       if(entry) openModalWithEntry(entry);
     });
 
-    if(entries.length){
-      renderPage();
-      fallback.hidden = true;
-    }else{
-      track.innerHTML = "";
-      more.hidden = true;
-      fallback.hidden = false;
-    }
+    // Carga progresiva: imprime según llegan batches
+    gatherEntriesByCategoryStream(
+      { LOOKBACK_DAYS, CATEGORY, GITHUB_USER, REPO_NAME },
+      renderPartial
+    ).then(all => { entries = all; });
+
+    // Muestra el fallback hasta recibir el primer batch
+    fallback.hidden = false;
   }
 
   // ===== Arranque =====
   ready(function(){
-    // Config por defecto (solo se usan si toca “autocrear” un contenedor)
+    // Defaults
     const DEF_GITHUB_USER   = scriptTag.getAttribute("data-github-user") || "MercadoVI";
     const DEF_REPO_NAME     = scriptTag.getAttribute("data-repo")        || "newsappri";
     const DEF_LOOKBACK_DAYS = Number(scriptTag.getAttribute("data-lookback") || 60);
