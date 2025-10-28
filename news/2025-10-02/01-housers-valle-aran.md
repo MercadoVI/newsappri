@@ -1,6 +1,6 @@
 <!--meta
 {
-  "title": "Housers lanza Valle de Arán II: préstamo con garantía hipotecaria",
+  "title": "Housers Launches “Valle de Arán II”: Mortgage-Backed Loan for Residential Development",
   "slug": "housers-valle-aran-ii",
   "source": "Realty Investor",
   "published_at": "10-02-2025",
@@ -10,45 +10,76 @@
   "tags": ["crowdfunding","hipotecaria","inmobiliario","lerida"]
 }
 -->
+Housers Launches “Valle de Arán II”: Mortgage-Backed Loan for Residential Development
 
-La plataforma de crowdfunding inmobiliario Housers ha activado la oportunidad Valle de Arán II, una operación de préstamo con garantía hipotecaria de primer rango destinada a financiar el desarrollo de un edificio plurifamiliar en Les (Valle de Arán, Lérida). El proyecto está ya en fase de financiación.
+This article is for informational purposes only and does not, under any circumstances, constitute investment advice or a recommendation.
 
-Datos clave del proyecto
-- Importe del tramo: 325.000 €  
-- Duración:** 10 meses (+6 de prórroga al mismo TIN del 10 %)  
-- Interés nominal anual (TIN): 10 %  
-- Rentabilidad estimada total: 8,33 %  
-- Pago de intereses: trimestral  
-- Amortización: a vencimiento  
-- Scoring: AA (GLOVAL)  
-- LTV: 34,93 %  
-- Inversión mínima: 300 €  
+The Housers real estate crowdfunding platform has activated the opportunity “Valle de Arán II”, a first-rank mortgage-backed loan aimed at financing the development of a multifamily residential building in Les (Valle de Arán, Lleida). The project is currently open for funding.
 
-El proyecto contempla la construcción de 9 viviendas y 17 plazas de aparcamiento, con un avance de obra estimado del 65,12 %. De las 9 viviendas, 6 ya están reservadas (66,67 %). La superficie total construida será de 1.850 m², distribuidos en tres alturas (planta baja, primera y bajo cubierta). La licencia de obras ya está concedida.
+Key Project Data
 
-Garantías e inmobiliario
-La garantía hipotecaria recae sobre el inmueble objeto del proyecto (viviendas y plazas a construir). Según tasación certificada por Valum en agosto de 2025, el valor actual del inmueble asciende a 1.932.314,69 €, y el valor estimado a la finalización se sitúa en 2.676.466,27 €. El promotor es Purica Multigremio Instalaciones, Mantenimientos y Servicios, S.L., con más de 11 años de experiencia en construcción y rehabilitación en el Valle de Arán.
+Funding amount (current tranche): €325,000
 
-Oportunidades
-- LTV moderado (< 35 %)** que aporta colchón de seguridad.  
-- Interés nominal competitivo del 10 %.
-- Promotor con experiencia local reconocida.  
-- Estado de obra avanzado: > 65 %.
-- Demanda validada: 6 de 9 viviendas reservadas
+Duration: 10 months (+6-month possible extension at the same 10% rate)
 
-Riesgos
-- Posibles retrasos en la finalización u imprevistos técnicos
-- Riesgo de colocación de stock (ventas) que puede afectar la liquidez y los rendimientos
-- Liquidez limitada: salida habitual al vencimiento salvo condiciones específicas
-- Dependencia del mercado local del Valle de Arán (sensibilidad a demanda turística/residencial)
-- Riesgo de prórroga: ampliación hasta 6 meses al mismo tipo
+Nominal annual interest rate (TIN): 10%
 
-Análisis sectorial y posicionamiento
-El Valle de Arán combina atractivo turístico y residencial —proximidad a Baqueira/Beret, entorno montañoso y oferta de ocio—, lo que sostiene la demanda de vivienda nueva. Operaciones como Valle de Arán II permiten a los inversores diversificar geográficamente fuera de grandes capitales, con un perfil de riesgo moderado apoyado por garantías reales.
+Estimated total return: 8.33%
 
-Estructura por tramos
-Este tramo de 325.000 € se integra en una estructura mayor cuyo monto total previsto asciende a 1.000.000 €, dividido en varios tramos. Todos los tramos comparten fecha de vencimiento final programada para el 8 de agosto de 2026.
+Interest payments: Quarterly
 
-Para los lectores de Realty Investor, Valle de Arán II representa una opción con perfil de riesgo moderado, buen respaldo en garantías y potencial de retorno atractivo en un mercado de nicho.
+Repayment: At maturity (bullet)
 
-La información aquí contenida es de carácter periodístico y no constituye recomendación de inversión.*
+Scoring: AA (GLOVAL)
+
+Loan-to-Value (LTV): 34.93%
+
+Minimum investment: €300
+
+The project involves the construction of 9 residential units and 17 parking spaces, with an estimated construction progress of 65.12%.
+Of the 9 homes, 6 are already reserved (66.67%). The total built area will reach 1,850 m², distributed across three floors (ground floor, first floor, and attic). The building permit has already been granted.
+
+Guarantees and Real Estate Backing
+
+The mortgage guarantee is secured by the property under development (both the homes and parking spaces).
+According to a certified appraisal by Valum (August 2025), the current appraised value of the property stands at €1,932,314.69, while the estimated completed value is €2,676,466.27.
+
+Developer: Purica Multigremio Instalaciones, Mantenimientos y Servicios, S.L. — a company with over 11 years of experience in construction and rehabilitation across the Valle de Arán region.
+
+Opportunities
+
+Moderate LTV (<35%) provides a safety cushion.
+
+Competitive nominal interest rate of 10%.
+
+Experienced local developer with a proven track record.
+
+Advanced construction progress (>65%).
+
+Validated demand: 6 of 9 homes already reserved.
+
+Risks
+
+Possible delays in completion or unforeseen technical issues.
+
+Potential stock placement risk (sales) that could affect liquidity or returns.
+
+Limited liquidity: exit typically occurs at maturity unless otherwise specified.
+
+Dependence on the local market of Valle de Arán (sensitive to tourism and residential demand).
+
+Extension risk: potential 6-month prolongation at the same rate.
+
+Sector Analysis and Market Positioning
+
+The Valle de Arán region combines tourism and residential appeal — proximity to Baqueira/Beret, mountain scenery, and a strong leisure offering — which sustains new housing demand.
+Projects like Valle de Arán II enable investors to diversify geographically outside major urban centers, offering a moderate risk profile supported by tangible guarantees.
+
+Tranche Structure
+
+This €325,000 tranche forms part of a larger financing structure totaling €1,000,000, divided into multiple tranches.
+All tranches share the same final maturity date: August 8, 2026.
+
+For Realty Investor readers, Valle de Arán II represents an opportunity with a balanced risk-return profile, strong collateral, and attractive yield potential in a niche market.
+
+The information contained herein is for journalistic purposes only and does not constitute investment advice.
